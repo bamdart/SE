@@ -15,16 +15,17 @@ namespace SE
     {
         List<List<List<Point>>> cubeShape = new List<List<List<Point>>>();//各方塊的初始形狀
 
-        Point nowCube = new Point(4, 4);//現在方塊所在位置
-        int[] nowShape = { 6, 0 };
+        Point nowCube = new Point(7, 0);//現在方塊所在位置
+        int[] nowShape = { 0, 0 };
 
         Pen pen = new Pen(Color.Black, 1);//格線
 
-        const int screenWidth = 28;
-        const int screenHeigh = 30;
-        const int cubeWidth = 15;
+        const int screenWidth = 15;
+        const int screenHeigh = 24;
+        const int cubeWidth = 20;
 
         SolidBrush[] Brush = {
+        new SolidBrush(Color.Empty),
         new SolidBrush(Color.Red),
         new SolidBrush(Color.Green),
         new SolidBrush(Color.Blue),
@@ -41,11 +42,70 @@ namespace SE
 
         List<List<Rectangle>> rect = new List<List<Rectangle>>();//rect位置
 
+        public void ClearNowShapeFromScreen()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
+                int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
+                gameScreen[tempX][tempY] = 0;
+            }
+        }
+
+        public void AddShapeToScreen()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
+                int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
+                gameScreen[tempX][tempY] = 1;
+            }
+        }
+
+        public void FocusCube()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
+                int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
+                gameScreen[tempX][tempY] = 2;
+            }
+        }
+
+        public int CheckBound(Point cube, int[] shape)//0是正常 1是超出寬度 2是超出高度 3是碰到方塊
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
+                int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
+                if (tempX < 0 || tempX >= screenWidth)//超出寬度
+                {
+                    return 1;
+                }
+                if (tempY < -2 || tempY >= screenHeigh)//超出高度
+                {
+                    return 2;
+                }
+            }
+            for(int i = 0; i < 4; i++)
+            {
+                int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
+                int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
+                if (gameScreen[tempX][tempY] == 2)//0是空的 1是現在 2是固定的
+                {
+                    return 3;
+                }
+            }
+
+            return 0;
+        }
+
         public void Rotate()
         {
-            int[] tempShape = nowShape;
-
-            if(cubeShape[tempShape[0]].Count <= tempShape[1] +1 )//下一個形狀長怎樣
+            int[] tempShape = new int[2];
+            tempShape[0] = nowShape[0];
+            tempShape[1] = nowShape[1];
+            if (cubeShape[tempShape[0]].Count <= tempShape[1] + 1)//下一個形狀長怎樣
             {
                 tempShape[1] = 0;
             }
@@ -54,23 +114,120 @@ namespace SE
                 tempShape[1]++;
             }
 
-            for (int i = 0; i < 4; i++) {
-                int tempX = nowCube.X + cubeShape[tempShape[0]][tempShape[1]][i].X;
-                int tempY = nowCube.Y + cubeShape[tempShape[0]][tempShape[1]][i].Y;
-                if (tempX < 0|| tempX > screenWidth)//超出寬度
+            if (CheckBound(nowCube, tempShape) !=0 ) { return; }
+
+            ClearNowShapeFromScreen();
+
+            nowShape = tempShape;
+
+            AddShapeToScreen();
+        }
+
+        public void GoLeft()
+        {
+            Point tempCube = new Point();
+            tempCube = nowCube;
+            tempCube.X = nowCube.X - 1;
+
+            if (CheckBound(tempCube, nowShape) != 0) { return; }
+
+            ClearNowShapeFromScreen();
+
+            nowCube = tempCube;
+
+            AddShapeToScreen();
+        }
+
+        public void GoRight()
+        {
+            Point tempCube = new Point();
+            tempCube = nowCube;
+            tempCube.X = nowCube.X + 1;
+
+            if (CheckBound(tempCube, nowShape) !=0 ) { return; }
+
+            ClearNowShapeFromScreen();
+
+            nowCube = tempCube;
+
+            AddShapeToScreen();
+        }
+
+        public void GoDown()
+        {
+            Point tempCube = new Point();
+            tempCube = nowCube;
+            while (CheckBound(tempCube, nowShape) == 0)
+            {
+                tempCube.Y = tempCube.Y + 1;
+                if (CheckBound(tempCube, nowShape) == 2 || CheckBound(tempCube, nowShape) == 3)
                 {
-                    return;
-                }
-                if(tempY < 0 || tempY > screenHeigh)//超出高度
-                {
-                    return;
-                }
-                if (gameScreen[tempX][tempY] == 2)//0是空的 1是現在 2是固定的
-                {
-                    return;
+                    tempCube.Y = tempCube.Y - 1;
+                    ClearNowShapeFromScreen();
+
+                    nowCube = tempCube;
+
+                    FocusCube();
+
+                    CheckClearRow();
+
+                    AddShapeToScreen();
+
+                    break;
                 }
             }
-            nowShape = tempShape;
+
+
+        }
+
+        public void TimerDown()
+        {
+            Point tempCube = new Point();
+            tempCube = nowCube;
+            tempCube.Y = nowCube.Y + 1;
+
+            if (CheckBound(tempCube, nowShape) == 2 || CheckBound(tempCube, nowShape) == 3)
+            {
+                tempCube.Y = tempCube.Y - 1;
+
+                ClearNowShapeFromScreen();
+
+                nowCube = tempCube;
+
+                FocusCube();
+
+                CheckClearRow();
+
+                AddShapeToScreen();
+
+                return;
+            }
+
+            ClearNowShapeFromScreen();
+
+            nowCube = tempCube;
+
+            AddShapeToScreen();
+        }
+
+        public void CheckClearRow()
+        {
+            FocusCube();
+
+            /*for (int i = 0; ; i < screenHeigh; i++){
+
+            }*/
+
+            CreateNewCube();
+        }
+
+        public void CreateNewCube()
+        {
+            nowCube.X = screenWidth / 2;
+            nowCube.Y = 0;
+
+            nowShape[0] = random.Next(0, 6);
+            nowShape[1] = 0;
         }
 
         public Form1()
@@ -78,7 +235,6 @@ namespace SE
             InitializeComponent();
             pictureBox1.Height = cubeWidth * screenHeigh;
             pictureBox1.Width = cubeWidth * screenWidth;
-
 
             bufferedGraphicsContext = BufferedGraphicsManager.Current;
             graphics = bufferedGraphicsContext.Allocate(pictureBox1.CreateGraphics(), pictureBox1.DisplayRectangle);
@@ -220,7 +376,8 @@ namespace SE
         private void Form1_Load(object sender, EventArgs e)
         {
             InitCubeShape();
-
+            nowCube.X = screenWidth / 2;
+            nowCube.Y = 0;
             for (int i = 0; i < cubeWidth * screenWidth; i += cubeWidth)//rect位置產生
             {
                 List<Rectangle> tempRect = new List<Rectangle>();
@@ -230,37 +387,35 @@ namespace SE
                 }
                 rect.Add(tempRect);
             }
-            for (int i = 0; i < rect.Count; i++)//隨機產生顏色
+
+            for (int i = 0; i < rect.Count; i++)
             {
                 List<int> tempScreen = new List<int>();
-                for (int j = 0; j < rect[i].Count; j++)
+                for (int j = 0; j < rect[i].Count + 2; j++)
                 {
-                    tempScreen.Add(random.Next(0, 4));
+                    tempScreen.Add(0);
                 }
                 gameScreen.Add(tempScreen);
             }
-            
+
+            AddShapeToScreen();
+            drawComponent(gameScreen);
+
         }
 
         public void drawComponent(List<List<int>> list)
-        {            
+        {
             graphics.Graphics.Clear(Color.White);
 
             for (int i = 0; i < rect.Count; i++)
             {
                 for (int j = 0; j < rect[i].Count; j++)
                 {
+                    
                     graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
                     graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
                 }
             }
-            for (int i = 0; i < 4; i++)
-            {
-                int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
-                int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                graphics.Graphics.FillRectangle(Brush[5], rect[tempX][tempY]);//測試轉動用
-            }
-            
 
             graphics.Render(pictureBox1.CreateGraphics());
         }
@@ -271,10 +426,12 @@ namespace SE
             {
                 for (int j = 0; j < rect[i].Count; j++)
                 {
-                    gameScreen[i][j] = random.Next(0, 4);
+                    //gameScreen[i][j] = random.Next(0, 4);
+                    gameScreen[i][j] = 0;
                 }
             }
-
+            timer1.Enabled = true;
+            AddShapeToScreen();
             drawComponent(gameScreen);
         }
 
@@ -291,14 +448,23 @@ namespace SE
             if (e.KeyCode == Keys.S)
             {
                 textBox1.Text += e.KeyCode;
+
+                GoDown();
+                drawComponent(gameScreen);
             }
             if (e.KeyCode == Keys.A)
             {
                 textBox1.Text += e.KeyCode;
+
+                GoLeft();
+                drawComponent(gameScreen);
             }
             if (e.KeyCode == Keys.D)
             {
                 textBox1.Text += e.KeyCode;
+
+                GoRight();
+                drawComponent(gameScreen);
             }
 
         }
@@ -306,6 +472,12 @@ namespace SE
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            TimerDown();
+            drawComponent(gameScreen);
         }
     }
 }
