@@ -50,17 +50,17 @@
             this.button1.Size = new System.Drawing.Size(66, 23);
             this.button1.TabIndex = 2;
             this.button1.TabStop = false;
-            this.button1.Text = "刷新畫面";
+            this.button1.Text = "開始遊戲";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // textBox1
             // 
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(403, 12);
+            this.textBox1.Location = new System.Drawing.Point(489, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(261, 470);
+            this.textBox1.Size = new System.Drawing.Size(175, 470);
             this.textBox1.TabIndex = 3;
             // 
             // button2
