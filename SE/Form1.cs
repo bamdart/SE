@@ -42,6 +42,10 @@ namespace SE
 
         List<List<Rectangle>> rect = new List<List<Rectangle>>();//rect位置
 
+        public int score = 0;
+
+        public int GameSpeed = 100; 
+
         public void ClearNowShapeFromScreen()
         {
             for (int i = 0; i < 4; i++)
@@ -241,6 +245,8 @@ namespace SE
             {
                 if (CheckRowAllIsCube(i))
                 {
+                    score++;
+                    label1.Text = score.ToString();
                     gameScreen.RemoveAt(i);
                     List<int> tempScreen = new List<int>();
                     for (int j = 0; j < rect[i].Count; j++)
@@ -308,6 +314,8 @@ namespace SE
                 //gameScreenColor.Add(tempScreen1);
             }
 
+            timer1.Interval = GameSpeed;
+
             AddShapeToScreen();
             drawComponent(gameScreen);
 
@@ -330,7 +338,45 @@ namespace SE
             graphics.Render(pictureBox1.CreateGraphics());
         }
 
-        private void button1_Click(object sender, EventArgs e)//開始遊戲
+        //讀按鍵功能
+        private void From1_KeyDown(object sender, KeyEventArgs e)
+        {
+            Console.WriteLine(e.KeyCode);
+            if (timer1.Enabled == true)
+            {
+                if (e.KeyCode == Keys.W)
+                {
+                    textBox1.Text += e.KeyCode;
+
+                    Rotate();
+                    drawComponent(gameScreen);
+                }
+                if (e.KeyCode == Keys.S)
+                {
+                    textBox1.Text += e.KeyCode;
+
+                    GoDown();
+                    drawComponent(gameScreen);
+                }
+                if (e.KeyCode == Keys.A)
+                {
+                    textBox1.Text += e.KeyCode;
+
+                    GoLeft();
+                    drawComponent(gameScreen);
+                }
+                if (e.KeyCode == Keys.D)
+                {
+                    textBox1.Text += e.KeyCode;
+
+                    GoRight();
+                    drawComponent(gameScreen);
+                }
+            }
+        }
+
+        //開始遊戲
+        private void button1_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < screenHeigh; i++)//初始化畫面
             {
@@ -342,46 +388,16 @@ namespace SE
 
             timer1.Enabled = true;//timer1 開始動作
 
+            score = 0;
+            label1.Text = score.ToString();
+
+            CreateNewCube();
+
             AddShapeToScreen();
 
             drawComponent(gameScreen);
         }
 
-
-        //讀按鍵功能
-        private void From1_KeyDown(object sender, KeyEventArgs e)
-        {
-            Console.WriteLine(e.KeyCode);
-            if (e.KeyCode == Keys.W)
-            {
-                textBox1.Text += e.KeyCode;
-
-                Rotate();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoDown();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoLeft();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoRight();
-                drawComponent(gameScreen);
-            }
-
-        }
 
         //離開遊戲按鈕
         private void button2_Click(object sender, EventArgs e)
@@ -389,6 +405,17 @@ namespace SE
             this.Close();
         }
 
+        //暫停遊戲
+        private void button3_Click(object sender, EventArgs e)
+        {
+            timer1.Enabled = false;
+        }
+
+        //繼續遊戲
+        private void button4_Click(object sender, EventArgs e)
+        {
+            timer1.Enabled = true;
+        }
 
         //時鐘
         private void timer1_Tick(object sender, EventArgs e)
@@ -527,5 +554,7 @@ namespace SE
             tempShape.Add(new Point(1, 2));
             cubeShape[6].Add(tempShape);
         }
+
+
     }
 }
