@@ -36,9 +36,9 @@ namespace SE
         BufferedGraphicsContext bufferedGraphicsContext;//buffer
         BufferedGraphics graphics;
 
-        List<List<int>> gameScreen = new List<List<int>>();//1R 2G 3B 4黑 5灰
-
-        Random random = new Random();//測試用
+        List<List<int>> gameScreen = new List<List<int>>();
+        //List<List<int>> gameScreenColor = new List<List<int>>();
+        Random random = new Random();
 
         List<List<Rectangle>> rect = new List<List<Rectangle>>();//rect位置
 
@@ -58,11 +58,11 @@ namespace SE
             {
                 int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
                 int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempY][tempX] = 1;
+                gameScreen[tempY][tempX] = nowShape[0] + 1;
             }
         }
 
-        public void FocusCube()
+        /*public void FocusCube()
         {
             for (int i = 0; i < 4; i++)
             {
@@ -70,7 +70,7 @@ namespace SE
                 int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
                 gameScreen[tempY][tempX] = 2;
             }
-        }
+        }*/
 
         public int CheckBound(Point cube, int[] shape)//0是正常 1是超出寬度 2是超出高度 3是碰到方塊
         {
@@ -87,11 +87,11 @@ namespace SE
                     return 2;
                 }
             }
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
                 int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
-                if (gameScreen[tempY][tempX] == 2)//0是空的 1是現在 2是固定的
+                if (gameScreen[tempY][tempX] != 0  )//0是空的
                 {
                     return 3;
                 }
@@ -105,6 +105,7 @@ namespace SE
             int[] tempShape = new int[2];
             tempShape[0] = nowShape[0];
             tempShape[1] = nowShape[1];
+
             if (cubeShape[tempShape[0]].Count <= tempShape[1] + 1)//下一個形狀長怎樣
             {
                 tempShape[1] = 0;
@@ -113,10 +114,13 @@ namespace SE
             {
                 tempShape[1]++;
             }
-
-            if (CheckBound(nowCube, tempShape) !=0 ) { return; }
-
             ClearNowShapeFromScreen();
+
+            if (CheckBound(nowCube, tempShape) != 0)
+            {
+                AddShapeToScreen();
+                return;
+            }
 
             nowShape = tempShape;
 
@@ -129,9 +133,13 @@ namespace SE
             tempCube = nowCube;
             tempCube.X = nowCube.X - 1;
 
-            if (CheckBound(tempCube, nowShape) != 0) { return; }
-
             ClearNowShapeFromScreen();
+
+            if (CheckBound(tempCube, nowShape) != 0)
+            {
+                AddShapeToScreen();
+                return;
+            }
 
             nowCube = tempCube;
 
@@ -144,9 +152,13 @@ namespace SE
             tempCube = nowCube;
             tempCube.X = nowCube.X + 1;
 
-            if (CheckBound(tempCube, nowShape) !=0 ) { return; }
-
             ClearNowShapeFromScreen();
+
+            if (CheckBound(tempCube, nowShape) != 0)
+            {
+                AddShapeToScreen();
+                return;
+            }
 
             nowCube = tempCube;
 
@@ -157,9 +169,12 @@ namespace SE
         {
             Point tempCube = new Point();
             tempCube = nowCube;
+            ClearNowShapeFromScreen();
+
             while (CheckBound(tempCube, nowShape) == 0)
             {
                 tempCube.Y = tempCube.Y + 1;
+                ClearNowShapeFromScreen();
                 if (CheckBound(tempCube, nowShape) == 2 || CheckBound(tempCube, nowShape) == 3)
                 {
                     tempCube.Y = tempCube.Y - 1;
@@ -167,7 +182,7 @@ namespace SE
 
                     nowCube = tempCube;
 
-                    FocusCube();
+                    AddShapeToScreen();
 
                     CheckClearRow();
 
@@ -176,6 +191,7 @@ namespace SE
                     break;
                 }
             }
+            AddShapeToScreen();
 
 
         }
@@ -185,16 +201,15 @@ namespace SE
             Point tempCube = new Point();
             tempCube = nowCube;
             tempCube.Y = nowCube.Y + 1;
+            ClearNowShapeFromScreen();
 
             if (CheckBound(tempCube, nowShape) == 2 || CheckBound(tempCube, nowShape) == 3)
             {
                 tempCube.Y = tempCube.Y - 1;
 
-                ClearNowShapeFromScreen();
-
                 nowCube = tempCube;
 
-                FocusCube();
+                AddShapeToScreen();
 
                 CheckClearRow();
 
@@ -213,26 +228,26 @@ namespace SE
         public bool CheckRowAllIsCube(int row)
         {
             for (int i = 0; i < screenWidth; i++)
-                if (gameScreen[row][i] != 2)
+                if (gameScreen[row][i] == 0 )
                     return false;
             return true;
         }
 
         public void CheckClearRow()
         {
-            FocusCube();
+            //FocusCube();
 
-            for (int i = nowCube.Y; i < screenHeigh ; i++)
+            for (int i = nowCube.Y; i < screenHeigh; i++)
             {
                 if (CheckRowAllIsCube(i))
                 {
                     gameScreen.RemoveAt(i);
                     List<int> tempScreen = new List<int>();
-                    for (int j = 0; j < rect[i].Count ; j++)
+                    for (int j = 0; j < rect[i].Count; j++)
                     {
                         tempScreen.Add(0);
                     }
-                    gameScreen.Insert(0,tempScreen);
+                    gameScreen.Insert(0, tempScreen);
                 }
             }
 
@@ -251,8 +266,8 @@ namespace SE
         public Form1()
         {
             InitializeComponent();
-            pictureBox1.Height = cubeWidth * screenHeigh;
-            pictureBox1.Width = cubeWidth * screenWidth;
+            pictureBox1.Height = cubeWidth * screenHeigh + 1;
+            pictureBox1.Width = cubeWidth * screenWidth + 1;
 
             bufferedGraphicsContext = BufferedGraphicsManager.Current;
             graphics = bufferedGraphicsContext.Allocate(pictureBox1.CreateGraphics(), pictureBox1.DisplayRectangle);
@@ -262,6 +277,128 @@ namespace SE
 
         }
 
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            InitCubeShape();//所有方塊的形狀
+
+            CreateNewCube();//產生一個新方塊
+
+            for (int i = 0; i < cubeWidth * screenHeigh; i += cubeWidth)//rect位置產生
+            {
+                List<Rectangle> tempRect = new List<Rectangle>();
+                for (int j = 0; j < cubeWidth * screenWidth; j += cubeWidth)
+                {
+                    tempRect.Add(new Rectangle(j, i, cubeWidth, cubeWidth));
+                }
+                rect.Add(tempRect);
+            }
+
+            for (int i = 0; i < screenHeigh; i++)//
+            {
+                List<int> tempScreen = new List<int>();
+                //List<int> tempScreen1 = new List<int>();
+                for (int j = 0; j < screenWidth; j++)
+                {
+                    tempScreen.Add(0);
+                    //tempScreen1.Add(0);
+                }
+                gameScreen.Add(tempScreen);
+                //gameScreenColor.Add(tempScreen1);
+            }
+
+            AddShapeToScreen();
+            drawComponent(gameScreen);
+
+        }
+
+        public void drawComponent(List<List<int>> list)
+        {
+            graphics.Graphics.Clear(Color.White);
+
+            for (int i = 0; i < screenHeigh; i++)
+            {
+                for (int j = 0; j < screenWidth; j++)
+                {
+
+                    graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
+                    graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
+                }
+            }
+
+            graphics.Render(pictureBox1.CreateGraphics());
+        }
+
+        private void button1_Click(object sender, EventArgs e)//開始遊戲
+        {
+            for (int i = 0; i < screenHeigh; i++)//初始化畫面
+            {
+                for (int j = 0; j < screenWidth; j++)
+                {
+                    gameScreen[i][j] = 0;
+                }
+            }
+
+            timer1.Enabled = true;//timer1 開始動作
+
+            AddShapeToScreen();
+
+            drawComponent(gameScreen);
+        }
+
+
+        //讀按鍵功能
+        private void From1_KeyDown(object sender, KeyEventArgs e)
+        {
+            Console.WriteLine(e.KeyCode);
+            if (e.KeyCode == Keys.W)
+            {
+                textBox1.Text += e.KeyCode;
+
+                Rotate();
+                drawComponent(gameScreen);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                textBox1.Text += e.KeyCode;
+
+                GoDown();
+                drawComponent(gameScreen);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                textBox1.Text += e.KeyCode;
+
+                GoLeft();
+                drawComponent(gameScreen);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                textBox1.Text += e.KeyCode;
+
+                GoRight();
+                drawComponent(gameScreen);
+            }
+
+        }
+
+        //離開遊戲按鈕
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+
+        //時鐘
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            TimerDown();
+            drawComponent(gameScreen);
+        }
+
+
+        //cube形狀
         private void InitCubeShape()
         {
             for (int i = 0; i < 7; i++)
@@ -389,117 +526,6 @@ namespace SE
             tempShape.Add(new Point(1, 1));
             tempShape.Add(new Point(1, 2));
             cubeShape[6].Add(tempShape);
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            InitCubeShape();
-            nowCube.X = screenWidth / 2;
-            nowCube.Y = 0;
-
-            for (int i = 0; i < cubeWidth * screenHeigh; i += cubeWidth)//rect位置產生
-            {
-                List<Rectangle> tempRect = new List<Rectangle>();
-                for (int j = 0; j < cubeWidth * screenWidth; j += cubeWidth)
-                {
-                    tempRect.Add(new Rectangle(j, i, cubeWidth, cubeWidth));
-                }
-                rect.Add(tempRect);
-            }
-
-            for (int i = 0; i < screenHeigh; i++)
-            {
-                List<int> tempScreen = new List<int>();
-                for (int j = 0; j < screenWidth; j++)
-                {
-                    tempScreen.Add(0);
-                }
-                gameScreen.Add(tempScreen);
-            }
-
-            AddShapeToScreen();
-            drawComponent(gameScreen);
-
-        }
-
-        public void drawComponent(List<List<int>> list)
-        {
-            graphics.Graphics.Clear(Color.White);
-
-            for (int i = 0; i < screenHeigh; i++)
-            {
-                for (int j = 0; j < screenWidth; j++)
-                {
-                    
-                    graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
-                    graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
-                }
-            }
-
-            graphics.Render(pictureBox1.CreateGraphics());
-        }
-
-        private void button1_Click(object sender, EventArgs e)//測試用
-        {
-            for (int i = 0; i < screenHeigh; i++)//隨機產生顏色
-            {
-                for (int j = 0; j < screenWidth; j++)
-                {
-                    //gameScreen[i][j] = random.Next(0, 4);
-                    gameScreen[i][j] = 0;
-                }
-            }
-
-            timer1.Enabled = true;
-
-            AddShapeToScreen();
-
-            drawComponent(gameScreen);
-        }
-
-        private void From1_KeyDown(object sender, KeyEventArgs e)
-        {
-            Console.WriteLine(e.KeyCode);
-            if (e.KeyCode == Keys.W)
-            {
-                textBox1.Text += e.KeyCode;
-
-                Rotate();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoDown();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoLeft();
-                drawComponent(gameScreen);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                textBox1.Text += e.KeyCode;
-
-                GoRight();
-                drawComponent(gameScreen);
-            }
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            TimerDown();
-            drawComponent(gameScreen);
         }
     }
 }
