@@ -20,9 +20,9 @@ namespace SE
 
         Pen pen = new Pen(Color.Black, 1);//格線
 
-        const int screenWidth = 15;
-        const int screenHeigh = 24;
-        const int cubeWidth = 20;
+        int screenWidth = 15;
+        int screenHeigh = 24;
+        int cubeWidth = 20;
 
         SolidBrush[] Brush = {
         new SolidBrush(Color.Empty),
@@ -48,7 +48,7 @@ namespace SE
             {
                 int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
                 int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempX][tempY] = 0;
+                gameScreen[tempY][tempX] = 0;
             }
         }
 
@@ -58,7 +58,7 @@ namespace SE
             {
                 int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
                 int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempX][tempY] = 1;
+                gameScreen[tempY][tempX] = 1;
             }
         }
 
@@ -68,7 +68,7 @@ namespace SE
             {
                 int tempX = nowCube.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
                 int tempY = nowCube.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempX][tempY] = 2;
+                gameScreen[tempY][tempX] = 2;
             }
         }
 
@@ -91,7 +91,7 @@ namespace SE
             {
                 int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
                 int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
-                if (gameScreen[tempX][tempY] == 2)//0是空的 1是現在 2是固定的
+                if (gameScreen[tempY][tempX] == 2)//0是空的 1是現在 2是固定的
                 {
                     return 3;
                 }
@@ -210,13 +210,31 @@ namespace SE
             AddShapeToScreen();
         }
 
+        public bool CheckRowAllIsCube(int row)
+        {
+            for (int i = 0; i < screenWidth; i++)
+                if (gameScreen[row][i] != 2)
+                    return false;
+            return true;
+        }
+
         public void CheckClearRow()
         {
             FocusCube();
 
-            /*for (int i = 0; ; i < screenHeigh; i++){
-
-            }*/
+            for (int i = nowCube.Y; i < screenHeigh ; i++)
+            {
+                if (CheckRowAllIsCube(i))
+                {
+                    gameScreen.RemoveAt(i);
+                    List<int> tempScreen = new List<int>();
+                    for (int j = 0; j < rect[i].Count ; j++)
+                    {
+                        tempScreen.Add(0);
+                    }
+                    gameScreen.Insert(0,tempScreen);
+                }
+            }
 
             CreateNewCube();
         }
@@ -378,20 +396,21 @@ namespace SE
             InitCubeShape();
             nowCube.X = screenWidth / 2;
             nowCube.Y = 0;
-            for (int i = 0; i < cubeWidth * screenWidth; i += cubeWidth)//rect位置產生
+
+            for (int i = 0; i < cubeWidth * screenHeigh; i += cubeWidth)//rect位置產生
             {
                 List<Rectangle> tempRect = new List<Rectangle>();
-                for (int j = 0; j < cubeWidth * screenHeigh; j += cubeWidth)
+                for (int j = 0; j < cubeWidth * screenWidth; j += cubeWidth)
                 {
-                    tempRect.Add(new Rectangle(i, j, cubeWidth, cubeWidth));
+                    tempRect.Add(new Rectangle(j, i, cubeWidth, cubeWidth));
                 }
                 rect.Add(tempRect);
             }
 
-            for (int i = 0; i < rect.Count; i++)
+            for (int i = 0; i < screenHeigh; i++)
             {
                 List<int> tempScreen = new List<int>();
-                for (int j = 0; j < rect[i].Count + 2; j++)
+                for (int j = 0; j < screenWidth; j++)
                 {
                     tempScreen.Add(0);
                 }
@@ -407,9 +426,9 @@ namespace SE
         {
             graphics.Graphics.Clear(Color.White);
 
-            for (int i = 0; i < rect.Count; i++)
+            for (int i = 0; i < screenHeigh; i++)
             {
-                for (int j = 0; j < rect[i].Count; j++)
+                for (int j = 0; j < screenWidth; j++)
                 {
                     
                     graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
@@ -422,16 +441,19 @@ namespace SE
 
         private void button1_Click(object sender, EventArgs e)//測試用
         {
-            for (int i = 0; i < rect.Count; i++)//隨機產生顏色
+            for (int i = 0; i < screenHeigh; i++)//隨機產生顏色
             {
-                for (int j = 0; j < rect[i].Count; j++)
+                for (int j = 0; j < screenWidth; j++)
                 {
                     //gameScreen[i][j] = random.Next(0, 4);
                     gameScreen[i][j] = 0;
                 }
             }
+
             timer1.Enabled = true;
+
             AddShapeToScreen();
+
             drawComponent(gameScreen);
         }
 
