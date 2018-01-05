@@ -26,12 +26,14 @@ namespace SE
 
         SolidBrush[] Brush = {
         new SolidBrush(Color.LightGray),//空白格子的顏色
-        new SolidBrush(Color.Red),//其他方塊的顏色
-        new SolidBrush(Color.Green),
-        new SolidBrush(Color.Blue),
-        new SolidBrush(Color.DarkRed),
-        new SolidBrush(Color.Yellow),
-        new SolidBrush(Color.Purple)};
+        new SolidBrush(Color.Red),//田
+        new SolidBrush(Color.Orange),//倒L
+        new SolidBrush(Color.DarkBlue),//L
+        new SolidBrush(Color.DarkRed),//z
+        new SolidBrush(Color.DarkGreen),//倒z
+        new SolidBrush(Color.Blue),//一
+        new SolidBrush(Color.Purple)//凸
+        };
 
         BufferedGraphicsContext bufferedGraphicsContext;//buffer
         BufferedGraphics graphics;//畫圖用
@@ -247,8 +249,7 @@ namespace SE
                     score++;//加分
                     label1.Text = score.ToString();//分數刷新
 
-                    //可以考慮在這邊加消除特效
-
+                    //消除特效
                     for(int j = 0; j < gameWidth; j++)
                     {
                         gameScreen[i][j] = 0;
@@ -275,7 +276,7 @@ namespace SE
             nowPoint.X = gameWidth / 2;
             nowPoint.Y = 0;
 
-            nowShape[0] = random.Next(0, 6);
+            nowShape[0] = random.Next(0, 7);
             nowShape[1] = 0;
         }
 

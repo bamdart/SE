@@ -69,9 +69,9 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(764, 293);
+            this.button2.Location = new System.Drawing.Point(764, 281);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(66, 23);
+            this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 4;
             this.button2.TabStop = false;
             this.button2.Text = "離開遊戲";
