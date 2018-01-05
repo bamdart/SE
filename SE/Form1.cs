@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Threading;
 
 namespace SE
 {
@@ -249,6 +249,13 @@ namespace SE
 
                     //可以考慮在這邊加消除特效
 
+                    for(int j = 0; j < gameWidth; j++)
+                    {
+                        gameScreen[i][j] = 0;
+                        drawComponent(gameScreen);
+                        Thread.Sleep(50);
+                    }
+
                     gameScreen.RemoveAt(i);//刪除被選取的那行
 
                     List<int> tempScreen = new List<int>();
@@ -318,6 +325,7 @@ namespace SE
             drawComponent(gameScreen);
         }
 
+        //畫圖
         public void drawComponent(List<List<int>> list)
         {
             graphics.Graphics.Clear(Color.White);//清除，底色
@@ -373,7 +381,6 @@ namespace SE
             GoDown();//隨時間下降
             drawComponent(gameScreen);
         }
-
 
         //cube形狀
         private void InitCubeShape()
@@ -526,6 +533,7 @@ namespace SE
 
             drawComponent(gameScreen);
         }
+
         //繼續遊戲
         private void pictureBox3_Click(object sender, EventArgs e)
         {
