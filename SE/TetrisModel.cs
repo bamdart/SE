@@ -11,25 +11,26 @@ using System.Threading;
 
 namespace SE
 {
-    class TetrisModel
+    public class TetrisModel
     {
         TetrisView view;
 
-        public static string IDLE_STATE = "IDLE",
-                             START_STATE = "START",
-                             PLAY_STATE = "PLAY",
-                             DOWN_STATE = "DOWN",
-                             LEFT_STATE = "LEFT",
-                             RIGHT_STATE = "RIGHT",
-                             TOBUTTOM_STATE = "TOBUTTOM",
-                             ROTATE_STATE = "ROTATE",
-                             CLEAR_STATE = "CLEAR",
-                             PAUSE_STATE = "PAUSE",
-                             STOP_STATE = "STOP",
-                             CONTINUE_STATE = "CONTINUE";
-        string state = IDLE_STATE;
-        List<List<List<Point>>> cubeShape = new List<List<List<Point>>>();//各方塊的初始形狀
+        public string IDLE_STATE = "IDLE",
+                      START_STATE = "START",
+                      PLAY_STATE = "PLAY",
+                      DOWN_STATE = "DOWN",
+                      LEFT_STATE = "LEFT",
+                      RIGHT_STATE = "RIGHT",
+                      TOBUTTOM_STATE = "TOBUTTOM",
+                      ROTATE_STATE = "ROTATE",
+                      CLEAR_STATE = "CLEAR",
+                      PAUSE_STATE = "PAUSE",
+                      STOP_STATE = "STOP",
+                      CONTINUE_STATE = "CONTINUE",
+                      EXIT_STATE = "EXIT";
+        string state = "";
 
+        List<List<List<Point>>> cubeShape = new List<List<List<Point>>>();//各方塊的初始形狀
         int gameWidth = 10; //寬有幾格
         int gameHeigh = 20; //高有幾格
         int cubeWidth = 30; //格子寬度
@@ -39,7 +40,7 @@ namespace SE
 
 
         List<List<int>> gameScreen = new List<List<int>>();//畫面現在有的方塊 0~7 0是空白 其他是各種方塊
-        Random random = new Random();//用來隨機產生方塊種類
+        Random random = new Random(Guid.NewGuid().GetHashCode());//用來隨機產生方塊種類
 
         List<List<Rectangle>> rect = new List<List<Rectangle>>();//rect位置，畫圖用
 
@@ -49,10 +50,38 @@ namespace SE
         public TetrisModel(TetrisView v)
         {
             view = v;
+            //
+
+            for (int i = 0; i < cubeWidth * gameHeigh; i += cubeWidth) //rect位置初始化
+            {
+                List<Rectangle> tempRect = new List<Rectangle>();
+                for (int j = 0; j < cubeWidth * gameWidth; j += cubeWidth)
+                {
+                    tempRect.Add(new Rectangle(j, i, cubeWidth, cubeWidth));
+                }
+                rect.Add(tempRect);
+            }
+
+            for (int i = 0; i < gameHeigh; i++)//畫面數據初始化
+            {
+                List<int> tempScreen = new List<int>();
+                for (int j = 0; j < gameWidth; j++)
+                {
+                    tempScreen.Add(0);
+                }
+                gameScreen.Add(tempScreen);
+            }
+            gameSpeed = 500;
+            //view.timer.Interval = gameSpeed;//設定遊戲速度
+        }
+        public void setView(TetrisView v)
+        {
+            view = v;
         }
         public void setState(string s)
         {
             state = s;
+            view.stateChanged(s);
         }
         public string getState()
         {
@@ -62,8 +91,16 @@ namespace SE
         {
             return gameScreen;
         }
+        public List<List<Rectangle>> getRect()
+        {
+            return rect;
+        }
         public int getScore()
         { return score; }
+        public Point getNowPoint()
+        {
+            return nowPoint;
+        }
         public List<List<List<Point>>> getAllShape()
         {
             return cubeShape;
@@ -192,13 +229,13 @@ namespace SE
                 if (CheckRowAllIsCube(i))//如果整排被填滿
                 {
                     score++;//加分
-                    view.lebal.Text = score.ToString();//分數刷新
+                    view.label.Text = score.ToString();//分數刷新
 
                     //消除特效
                     for (int j = 0; j < gameWidth; j++)
                     {
                         gameScreen[i][j] = 0;
-                        view.drawComponent(gameScreen);
+                        view.updateView();
                         Thread.Sleep(50);
                     }
 
@@ -301,9 +338,24 @@ namespace SE
         }
         public void initModel()
         {
-            gameScreen.Clear();
+            //Init All data
+            //初始化畫面
+            for (int i = 0; i < gameHeigh; i++)
+            {
+                for (int j = 0; j < gameWidth; j++)
+                {
+                    gameScreen[i][j] = 0;
+                }
+            }
             score = 0;
+            gameSpeed = 500;
+            view.timer.Enabled = true;//timer1 開始動作
+            view.label.Text = score.ToString();
             InitCubeShape();
+
+            //NEW CUBE
+            CreateNewCube();
+            AddShapeToScreen();
 
         }
         public void pause()

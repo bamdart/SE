@@ -13,15 +13,30 @@ namespace SE
 {
     public partial class TetrisView : Form
     {
+
         TetrisModel model;
         TetrisController controller;
         public System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-        public Label lebal=new Label();
-        List<List<List<Point>>> cubeShape = new List<List<List<Point>>>();//各方塊的初始形狀
-
-        Point nowPoint = new Point(7, 0);//現在方塊所在位置
-        int[] nowShape = { 0, 0 };//現在的圖形 , 現在圖形是第幾旋轉形狀
-
+        public Label label = new Label();
+        private Button startBtn = new Button();
+        private Button pauseBtn = new Button();
+        private Button exitBtn = new Button();
+        private PictureBox picBox = new PictureBox();
+        BufferedGraphicsContext bufferedGraphicsContext;//buffer
+        BufferedGraphics graphics;//畫圖用
+        public string IDLE_STATE = "IDLE",
+              START_STATE = "START",
+              PLAY_STATE = "PLAY",
+              DOWN_STATE = "DOWN",
+              LEFT_STATE = "LEFT",
+              RIGHT_STATE = "RIGHT",
+              TOBUTTOM_STATE = "TOBUTTOM",
+              ROTATE_STATE = "ROTATE",
+              CLEAR_STATE = "CLEAR",
+              PAUSE_STATE = "PAUSE",
+              STOP_STATE = "STOP",
+              CONTINUE_STATE = "CONTINUE",
+              EXIT_STATE = "EXIT";
         Pen pen = new Pen(Color.Black, 1);//格線顏色 , 粗度
 
         int gameWidth = 10; //寬有幾格
@@ -39,534 +54,238 @@ namespace SE
         new SolidBrush(Color.Purple)//凸
         };
 
-        BufferedGraphicsContext bufferedGraphicsContext;//buffer
-        BufferedGraphics graphics;//畫圖用
+        Random random = new Random(Guid.NewGuid().GetHashCode());//用來隨機產生方塊種類
 
-        List<List<int>> gameScreen = new List<List<int>>();//畫面現在有的方塊 0~7 0是空白 其他是各種方塊
-        Random random = new Random();//用來隨機產生方塊種類
 
-        List<List<Rectangle>> rect = new List<List<Rectangle>>();//rect位置，畫圖用
-
-        public int score = 0;//分數
-
-        public int gameSpeed = 500;//遊戲速度 
-        public TetrisView(TetrisController con)
+        public TetrisView(TetrisController con,TetrisModel m)
         {
             controller = con;
-        }
-        public void ClearNowShapeFromScreen()//把現有方塊從畫面上先消除，避免影響判斷碰撞
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                int tempX = nowPoint.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
-                int tempY = nowPoint.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempY][tempX] = 0;
-            }
+            model = m;
+            this.Size = new Size(600, 600);
+            this.Load += TetrisView_Load;
+            InitializeComponent();
+
         }
 
-        public void AddShapeToScreen()//將現有方塊加入畫面中
+        private void TetrisView_Load(object sender, EventArgs e)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                int tempX = nowPoint.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
-                int tempY = nowPoint.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
-                gameScreen[tempY][tempX] = nowShape[0] + 1;//從1~7 0被用來當空白，所以+1
-            }
+            controller.userHasInput(IDLE_STATE);
         }
 
-        //0是正常 1是超出寬度 2是超出高度 3是碰到方塊
-        public int CheckBound(Point cube, int[] shape)
+        public virtual void drawComponent()
         {
-            for (int i = 0; i < 4; i++)
-            {
-                int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
-                int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
-                if (tempX < 0 || tempX >= gameWidth)//超出寬度
-                {
-                    return 1;
-                }
-                if (tempY < 0 || tempY >= gameHeigh)//超出高度
-                {
-                    return 2;
-                }
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                int tempX = cube.X + cubeShape[shape[0]][shape[1]][i].X;
-                int tempY = cube.Y + cubeShape[shape[0]][shape[1]][i].Y;
-                if (gameScreen[tempY][tempX] != 0)
-                {
-                    return 3;
-                }
-            }
-
-            return 0;
+            picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
+            picBox.Width = cubeWidth * gameWidth + 1;
+            picBox.Location = new Point(10, 10);
+            this.Controls.Add(picBox);
+            startBtn.Size = new Size(75, 25);
+            startBtn.Text = "開始";
+            startBtn.Location = new Point(440, 60);
+            this.Controls.Add(startBtn);
+            pauseBtn.Size = new Size(75, 25);
+            pauseBtn.Text = "暫停";
+            pauseBtn.Location = new Point(440, 125);
+            this.Controls.Add(pauseBtn);
+            exitBtn.Size = new Size(75, 25);
+            exitBtn.Text = "離開";
+            exitBtn.Location = new Point(440, 190);
+            this.Controls.Add(exitBtn);
+            label.Location = new Point(440, 12);
+            label.Text = "Score:0";
+            this.Controls.Add(label);
+            //
+            startBtn.Click += StartBtn_Click;
+            pauseBtn.Click += PauseBtn_Click;
+            exitBtn.Click += ExitBtn_Click;
+            timer.Tick += Timer_Tick;
         }
 
-        public void Rotate()//轉動
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            int[] tempShape = new int[2];
-            tempShape[0] = nowShape[0];
-            tempShape[1] = nowShape[1];
+            controller.userHasInput(model.DOWN_STATE);
+        }
 
-            //下一個形狀長怎樣
-            if (cubeShape[tempShape[0]].Count <= tempShape[1] + 1)
+        private void ExitBtn_Click(object sender, EventArgs e)
+        {
+            controller.userHasInput(model.EXIT_STATE);
+        }
+
+        private void PauseBtn_Click(object sender, EventArgs e)
+        {
+            if (model.getState() != model.PAUSE_STATE)
             {
-                tempShape[1] = 0;
+                pauseBtn.Text = "繼續";
+                controller.userHasInput(model.PAUSE_STATE);
             }
             else
             {
-                tempShape[1]++;
-            }
-
-            ClearNowShapeFromScreen();
-
-            //如果有碰撞，直接畫原本的回去畫面
-            if (CheckBound(nowPoint, tempShape) != 0)
-            {
-                AddShapeToScreen();
-                return;
-            }
-
-            //新的位置
-            nowShape = tempShape;
-            AddShapeToScreen();
-        }
-
-        //往左
-        public void GoLeft()
-        {
-            Point tempCube = new Point();
-            tempCube = nowPoint;
-            tempCube.X = nowPoint.X - 1;
-
-            ClearNowShapeFromScreen();
-
-            //如果有碰撞，直接畫原本的回去畫面
-            if (CheckBound(tempCube, nowShape) != 0)
-            {
-                AddShapeToScreen();
-                return;
-            }
-
-            nowPoint = tempCube;
-            AddShapeToScreen();
-        }
-
-        public void GoRight()
-        {
-            Point tempCube = new Point();
-            tempCube = nowPoint;
-            tempCube.X = nowPoint.X + 1;
-
-            ClearNowShapeFromScreen();
-
-            //如果有碰撞，直接畫原本的回去畫面
-            if (CheckBound(tempCube, nowShape) != 0)
-            {
-                AddShapeToScreen();
-                return;
-            }
-
-            nowPoint = tempCube;
-            AddShapeToScreen();
-        }
-
-        public void GoDown()
-        {
-            Point tempPoint = new Point();
-            tempPoint = nowPoint;
-            tempPoint.Y = tempPoint.Y + 1;
-
-            ClearNowShapeFromScreen();
-
-            //死亡判斷
-            if ((CheckBound(tempPoint, nowShape) == 2 || CheckBound(tempPoint, nowShape) == 3) && nowPoint.Y == 0)
-            {
-                timer1.Enabled = false;//遊戲停止
-                AddShapeToScreen();
-                return;
-            }
-
-            //下降碰撞判斷，有碰到
-            if (CheckBound(tempPoint, nowShape) == 2 || CheckBound(tempPoint, nowShape) == 3)
-            {
-                tempPoint.Y = tempPoint.Y - 1;//往回
-
-                nowPoint = tempPoint;
-                AddShapeToScreen();
-
-                CheckClearRow();
-                AddShapeToScreen();
-
-                return;
-            }
-
-            nowPoint = tempPoint;
-            AddShapeToScreen();
-        }
-
-        //下到底部
-        public void DownToBottom()
-        {
-            Point tempPoint = new Point();
-            tempPoint = nowPoint;
-            ClearNowShapeFromScreen();
-
-            if ((CheckBound(tempPoint, nowShape) == 2 || CheckBound(tempPoint, nowShape) == 3) && nowPoint.Y == 0)
-            {
-                timer1.Enabled = false;//遊戲停止
-                AddShapeToScreen();
-                return;
-            }
-
-            while (CheckBound(tempPoint, nowShape) == 0)
-            {
-                tempPoint.Y = tempPoint.Y + 1;
-                if (CheckBound(tempPoint, nowShape) == 2 || CheckBound(tempPoint, nowShape) == 3)
-                {
-                    tempPoint.Y = tempPoint.Y - 1;
-
-                    nowPoint = tempPoint;
-                    AddShapeToScreen();
-
-                    CheckClearRow();
-                    AddShapeToScreen();
-
-                    break;
-                }
+                pauseBtn.Text = "暫停";
+                controller.userHasInput(model.PLAY_STATE);
             }
         }
 
-        public bool CheckRowAllIsCube(int row)//確定整排都有東西
+        private void StartBtn_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < gameWidth; i++)
-                if (gameScreen[row][i] == 0)
-                    return false;
-            return true;
-        }
-
-        //確定有沒有消除
-        public void CheckClearRow()
-        {
-            for (int i = nowPoint.Y; i < gameHeigh; i++)
-            {
-                if (CheckRowAllIsCube(i))//如果整排被填滿
-                {
-                    score++;//加分
-                    label1.Text = score.ToString();//分數刷新
-
-                    //消除特效
-                    for (int j = 0; j < gameWidth; j++)
-                    {
-                        gameScreen[i][j] = 0;
-                        drawComponent(gameScreen);
-                        Thread.Sleep(50);
-                    }
-
-                    gameScreen.RemoveAt(i);//刪除被選取的那行
-
-                    List<int> tempScreen = new List<int>();
-                    for (int j = 0; j < rect[i].Count; j++)
-                    {
-                        tempScreen.Add(0);
-                    }
-                    gameScreen.Insert(0, tempScreen);//插回最上層
-                }
-            }
-
-            CreateNewCube();//新方塊
-        }
-
-        public void CreateNewCube()
-        {
-            nowPoint.X = gameWidth / 2;
-            nowPoint.Y = 0;
-
-            nowShape[0] = random.Next(0, 7);
-            nowShape[1] = 0;
+            controller.userHasInput(model.START_STATE);
         }
 
         public TetrisView()
         {
-            InitializeComponent();
-            pictureBox1.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
-            pictureBox1.Width = cubeWidth * gameWidth + 1;
-
+            //InitializeComponent();
             //畫圖用
             bufferedGraphicsContext = BufferedGraphicsManager.Current;
-            graphics = bufferedGraphicsContext.Allocate(pictureBox1.CreateGraphics(), pictureBox1.DisplayRectangle);
+            graphics = bufferedGraphicsContext.Allocate(picBox.CreateGraphics(), picBox.DisplayRectangle);
 
-            //按鍵事件
-            KeyDown += new KeyEventHandler(From1_KeyDown);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        //Override ProcessCmdKey
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            InitCubeShape();//所有方塊的形狀先產生好
-
-            CreateNewCube();//產生一個新方塊
-
-            for (int i = 0; i < cubeWidth * gameHeigh; i += cubeWidth) //rect位置初始化
+            if (timer.Enabled == true)
             {
-                List<Rectangle> tempRect = new List<Rectangle>();
-                for (int j = 0; j < cubeWidth * gameWidth; j += cubeWidth)
+                if (keyData == Keys.Up)
                 {
-                    tempRect.Add(new Rectangle(j, i, cubeWidth, cubeWidth));
+                    controller.userHasInput(keyData);
+                    return true;
                 }
-                rect.Add(tempRect);
-            }
-
-            for (int i = 0; i < gameHeigh; i++)//畫面數據初始化
-            {
-                List<int> tempScreen = new List<int>();
-                for (int j = 0; j < gameWidth; j++)
+                if (keyData == Keys.Down)
                 {
-                    tempScreen.Add(0);
+                    controller.userHasInput(keyData);
+                    return true;
                 }
-                gameScreen.Add(tempScreen);
+                if (keyData == Keys.Left)
+                {
+                    controller.userHasInput(keyData);
+                    return true;
+                }
+                if (keyData == Keys.Right)
+                {
+                    controller.userHasInput(keyData);
+                    return true;
+                }
+                if (keyData == Keys.Space)
+                {
+                    controller.userHasInput(keyData);
+                    return true;
+                }
             }
-
-            timer1.Interval = gameSpeed;//設定遊戲速度
-
-            AddShapeToScreen();
-            drawComponent(gameScreen);
+            // Call the base class
+            return base.ProcessCmdKey(ref msg, keyData);
         }
-        //畫圖
-        public void drawComponent(List<List<int>> list)
+        ////畫圖
+        //public void updateView(List<List<int>> list)
+        //{
+        //    graphics.Graphics.Clear(Color.White);//清除，底色
+
+        //    for (int i = 0; i < gameHeigh; i++)//畫圖
+        //    {
+        //        for (int j = 0; j < gameWidth; j++)
+        //        {
+        //            graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
+        //            graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
+        //        }
+        //    }
+
+        //    graphics.Render(pictureBox1.CreateGraphics());
+        //}
+
+        public void updateView()
         {
+            List<List<int>> gameScreen = model.getScreen();
+            List<List<Rectangle>> rect = model.getRect();
             graphics.Graphics.Clear(Color.White);//清除，底色
 
             for (int i = 0; i < gameHeigh; i++)//畫圖
             {
                 for (int j = 0; j < gameWidth; j++)
                 {
-                    graphics.Graphics.FillRectangle(Brush[list[i][j]], rect[i][j]);//填滿顏色
+                    graphics.Graphics.FillRectangle(Brush[gameScreen[i][j]], rect[i][j]);//填滿顏色
                     graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
                 }
             }
 
-            graphics.Render(pictureBox1.CreateGraphics());
+            graphics.Render(picBox.CreateGraphics());
         }
 
         //讀按鍵功能
         private void From1_KeyDown(object sender, KeyEventArgs e)
         {
-            Console.WriteLine(e.KeyCode);
-            if (timer1.Enabled == true)
-            {
-                if (e.KeyCode == Keys.Up)
-                {
-                    Rotate();
-                    drawComponent(gameScreen);
-                }
-                if (e.KeyCode == Keys.Down)
-                {
-                    GoDown();
-                    drawComponent(gameScreen);
-                }
-                if (e.KeyCode == Keys.Left)
-                {
-                    GoLeft();
-                    drawComponent(gameScreen);
-                }
-                if (e.KeyCode == Keys.Right)
-                {
-                    GoRight();
-                    drawComponent(gameScreen);
-                }
-                if (e.KeyCode == Keys.Space)
-                {
-                    DownToBottom();
-                    drawComponent(gameScreen);
-                }
-            }
+            //Move to ProcessCmdKey(...)
+
+            //Console.WriteLine(e.KeyCode);
+            //if (timer1.Enabled == true)
+            //{
+            //    if (e.KeyCode == Keys.Up)
+            //    {
+            //        Rotate();
+            //        drawComponent(gameScreen);
+            //    }
+            //    if (e.KeyCode == Keys.Down)
+            //    {
+            //        GoDown();
+            //        drawComponent(gameScreen);
+            //    }
+            //    if (e.KeyCode == Keys.Left)
+            //    {
+            //        GoLeft();
+            //        drawComponent(gameScreen);
+            //    }
+            //    if (e.KeyCode == Keys.Right)
+            //    {
+            //        GoRight();
+            //        drawComponent(gameScreen);
+            //    }
+            //    if (e.KeyCode == Keys.Space)
+            //    {
+            //        DownToBottom();
+            //        drawComponent(gameScreen);
+            //    }
+            //}
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            GoDown();//隨時間下降
 
-            drawComponent(gameScreen);
-        }
-
-        //cube形狀
-        private void InitCubeShape()
-        {
-            for (int i = 0; i < 7; i++)
-            {
-                cubeShape.Add(new List<List<Point>>());
-            }
-
-            List<Point> tempShape = new List<Point>();
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 1));
-            cubeShape[0].Add(tempShape);//方塊
-
-            tempShape = new List<Point>();//L左
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(2, 1));
-            cubeShape[1].Add(tempShape);
-            tempShape = new List<Point>();//L左
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(0, 2));
-            cubeShape[1].Add(tempShape);
-            tempShape = new List<Point>();//L左
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(2, 1));
-            cubeShape[1].Add(tempShape);
-            tempShape = new List<Point>();//L左
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(1, 2));
-            tempShape.Add(new Point(0, 2));
-            cubeShape[1].Add(tempShape);
-
-            tempShape = new List<Point>();//L右
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(2, 1));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(0, 1));
-            cubeShape[2].Add(tempShape);
-            tempShape = new List<Point>();//L右
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(0, 2));
-            tempShape.Add(new Point(1, 2));
-            cubeShape[2].Add(tempShape);
-            tempShape = new List<Point>();//L右
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(0, 1));
-            cubeShape[2].Add(tempShape);
-            tempShape = new List<Point>();//L右
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(1, 2));
-            cubeShape[2].Add(tempShape);
-
-            tempShape = new List<Point>();//z左
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(1, 2));
-            cubeShape[3].Add(tempShape);
-            tempShape = new List<Point>();//z左
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 1));
-            cubeShape[3].Add(tempShape);
-
-            tempShape = new List<Point>();//z右
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(0, 2));
-            cubeShape[4].Add(tempShape);
-            tempShape = new List<Point>();//z右
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(2, 1));
-            cubeShape[4].Add(tempShape);
-
-            tempShape = new List<Point>();//直線
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(0, 2));
-            tempShape.Add(new Point(0, 3));
-            cubeShape[5].Add(tempShape);
-            tempShape = new List<Point>();//直線
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(3, 0));
-            cubeShape[5].Add(tempShape);
-
-            tempShape = new List<Point>();//凸
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(2, 1));
-            cubeShape[6].Add(tempShape);
-            tempShape = new List<Point>();//凸
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(0, 2));
-            tempShape.Add(new Point(1, 1));
-            cubeShape[6].Add(tempShape);
-            tempShape = new List<Point>();//凸
-            tempShape.Add(new Point(0, 0));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(2, 0));
-            tempShape.Add(new Point(1, 1));
-            cubeShape[6].Add(tempShape);
-            tempShape = new List<Point>();//凸
-            tempShape.Add(new Point(0, 1));
-            tempShape.Add(new Point(1, 0));
-            tempShape.Add(new Point(1, 1));
-            tempShape.Add(new Point(1, 2));
-            cubeShape[6].Add(tempShape);
-        }
-
-        //開始遊戲
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < gameHeigh; i++)//初始化畫面
-            {
-                for (int j = 0; j < gameWidth; j++)
-                {
-                    gameScreen[i][j] = 0;
-                }
-            }
-
-            timer1.Enabled = true;//timer1 開始動作
-
-            score = 0;
-            label1.Text = score.ToString();
-
-            CreateNewCube();
-            AddShapeToScreen();
-
-            drawComponent(gameScreen);
-        }
-
-        //繼續遊戲
-        private void pictureBox3_Click(object sender, EventArgs e)
-        {
-            stateChanged()
-        }
-
-        //暫停遊戲
-        private void pictureBox4_Click(object sender, EventArgs e)
-        {
-            timer1.Enabled = false;
-        }
-
-        //離開遊戲
-        private void pictureBox5_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
         public void stateChanged(string state)
         {
+            if (state.Equals(model.IDLE_STATE))
+            {
+                drawComponent();
+            }
+            if (state.Equals(model.LEFT_STATE) ||
+                state.Equals(model.RIGHT_STATE) ||
+                    state.Equals(model.DOWN_STATE) ||
+                state.Equals(model.TOBUTTOM_STATE) ||
+                state.Equals(model.ROTATE_STATE))
+            {
+                updateView();
+            }
+
+            if (state.Equals(model.START_STATE))
+            {
+                timer.Enabled = true;
+                updateView();
+            }
+            if (state.Equals(model.PLAY_STATE))
+            {
+
+            }
+
+            if (state.Equals(model.CLEAR_STATE))
+            {
+
+            }
+            if (state.Equals(model.PAUSE_STATE))
+            {
+
+            }
+            if (state.Equals(model.CONTINUE_STATE))
+            {
+
+            }
+            if (state.Equals(model.STOP_STATE))
+            {
+
+            }
 
         }
-        public void updateView()
-        {
-
-        }
-
     }
 }
