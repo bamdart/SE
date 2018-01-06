@@ -28,3 +28,12 @@ C:\Users\bamda\Documents\Visual Studio 2017\Projects\Software Engineer\SE\SE\obj
 C:\Users\bamda\Documents\Visual Studio 2017\Projects\Software Engineer\SE\SE\obj\Debug\SE.csproj.CoreCompileInputs.cache
 C:\Users\bamda\Documents\Visual Studio 2017\Projects\Software Engineer\SE\SE\obj\Debug\SE.exe
 C:\Users\bamda\Documents\Visual Studio 2017\Projects\Software Engineer\SE\SE\obj\Debug\SE.pdb
+D:\SE\SE\bin\Debug\SE.exe.config
+D:\SE\SE\bin\Debug\SE.exe
+D:\SE\SE\bin\Debug\SE.pdb
+D:\SE\SE\obj\Debug\SE.csprojResolveAssemblyReference.cache
+D:\SE\SE\obj\Debug\SE.Properties.Resources.resources
+D:\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache
+D:\SE\SE\obj\Debug\SE.exe
+D:\SE\SE\obj\Debug\SE.pdb
+D:\SE\SE\obj\Debug\SE.TetrisView.resources
