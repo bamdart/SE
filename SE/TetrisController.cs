@@ -26,8 +26,8 @@ namespace SE
 
         public TetrisController()
         {
-            model = new TetrisModel(view);
             view = new TetrisView(this,model);
+            model = new TetrisModel(view);
             model.setView(view);
         }
         public TetrisView getView()
@@ -39,21 +39,21 @@ namespace SE
         {
             if (userInput.Equals(DOWN_STATE))
             {
-                model.setState(DOWN_STATE);
                 model.GoDown();
+                model.setState(DOWN_STATE);
             }
             if (userInput.Equals(IDLE_STATE))
             {
                 model.setState(IDLE_STATE);
-                view.drawComponent();
             }
             if (userInput.Equals(START_STATE))
             {
-                model.setState(START_STATE);
                 model.initModel();
+                model.setState(START_STATE);
             }
             if (userInput.Equals(PLAY_STATE))
             {
+                model.gameContinue();
                 model.setState(PLAY_STATE);
             }
 
@@ -74,13 +74,12 @@ namespace SE
             }
             if (userInput.Equals(STOP_STATE))
             {
-                model.exit();
                 model.setState(STOP_STATE);
             }
             if (userInput.Equals(EXIT_STATE))
             {
-                model.setState(DOWN_STATE);
-                model.GoDown();
+                model.exit();
+                model.setState(EXIT_STATE);
             }
         }
         public void userHasInput(Keys keydcode)
@@ -92,21 +91,24 @@ namespace SE
             }
             if (keydcode == Keys.Right)
             {
-                model.setState(RIGHT_STATE);
                 model.GoRight();
-
+                model.setState(RIGHT_STATE);
             }
             if (keydcode == Keys.Down)
             {
-                model.setState(TOBUTTOM_STATE);
-                model.DownToBottom();
+                model.GoDown();
+                model.setState(DOWN_STATE);
+            }
 
+            if (keydcode == Keys.Up)
+            {
+                model.Rotate();
+                model.setState(ROTATE_STATE);
             }
             if (keydcode == Keys.Space)
             {
-                model.setState(ROTATE_STATE);
-                model.Rotate();
-
+                model.DownToBottom();
+                model.setState(TOBUTTOM_STATE);
             }
         }
     }

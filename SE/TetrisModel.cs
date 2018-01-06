@@ -50,6 +50,7 @@ namespace SE
         public TetrisModel(TetrisView v)
         {
             view = v;
+            view.model = this;
             //
 
             for (int i = 0; i < cubeWidth * gameHeigh; i += cubeWidth) //rect位置初始化
@@ -71,8 +72,8 @@ namespace SE
                 }
                 gameScreen.Add(tempScreen);
             }
-            gameSpeed = 500;
-            //view.timer.Interval = gameSpeed;//設定遊戲速度
+            gameSpeed = 1000;
+            view.timer.Interval = gameSpeed;//設定遊戲速度
         }
         public void setView(TetrisView v)
         {
@@ -304,7 +305,7 @@ namespace SE
         {
             for (int i = 0; i < 4; i++)
             {
-                int tempX = nowPoint.X + cubeShape[nowShape[0]][nowShape[1]][i].X;
+                int tempX = nowPoint.X + cubeShape[nowShape[0]][nowShape[1]][i].X;//nowShape[0]是形狀 nowShape[1]是旋轉方向
                 int tempY = nowPoint.Y + cubeShape[nowShape[0]][nowShape[1]][i].Y;
                 gameScreen[tempY][tempX] = nowShape[0] + 1;//從1~7 0被用來當空白，所以+1
             }

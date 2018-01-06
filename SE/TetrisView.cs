@@ -14,7 +14,7 @@ namespace SE
     public partial class TetrisView : Form
     {
 
-        TetrisModel model;
+        public TetrisModel model;
         TetrisController controller;
         public System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         public Label label = new Label();
@@ -61,8 +61,10 @@ namespace SE
         {
             controller = con;
             model = m;
-            this.Size = new Size(600, 600);
+            this.Size = new Size(600, 700);
             this.Load += TetrisView_Load;
+
+            
             InitializeComponent();
 
         }
@@ -93,7 +95,8 @@ namespace SE
             label.Location = new Point(440, 12);
             label.Text = "Score:0";
             this.Controls.Add(label);
-            //
+
+            //每個button對應的function
             startBtn.Click += StartBtn_Click;
             pauseBtn.Click += PauseBtn_Click;
             exitBtn.Click += ExitBtn_Click;
@@ -150,7 +153,7 @@ namespace SE
                 }
                 if (keyData == Keys.Down)
                 {
-                    controller.userHasInput(keyData);
+                    controller.userHasInput(keyData);//暫時還沒有功能
                     return true;
                 }
                 if (keyData == Keys.Left)
@@ -203,7 +206,7 @@ namespace SE
                     graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
                 }
             }
-
+            
             graphics.Render(picBox.CreateGraphics());
         }
 
@@ -261,6 +264,11 @@ namespace SE
 
             if (state.Equals(model.START_STATE))
             {
+                //讓畫布與畫圖工具做對應
+                bufferedGraphicsContext = BufferedGraphicsManager.Current;
+                graphics = bufferedGraphicsContext.Allocate(picBox.CreateGraphics(), picBox.DisplayRectangle);
+
+
                 timer.Enabled = true;
                 updateView();
             }

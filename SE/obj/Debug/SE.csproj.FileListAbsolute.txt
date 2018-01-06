@@ -7,3 +7,13 @@ C:\11\SE\SE\bin\Debug\SE.exe
 C:\11\SE\SE\bin\Debug\SE.pdb
 C:\11\SE\SE\obj\Debug\SE.exe
 C:\11\SE\SE\obj\Debug\SE.pdb
+C:\Users\ms076\Desktop\軟工\SE\SE\bin\Debug\SE.exe.config
+C:\Users\ms076\Desktop\軟工\SE\SE\bin\Debug\SE.exe
+C:\Users\ms076\Desktop\軟工\SE\SE\bin\Debug\SE.pdb
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.csprojResolveAssemblyReference.cache
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.Properties.Resources.resources
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.TetrisView.resources
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.csproj.CoreCompileInputs.cache
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.exe
+C:\Users\ms076\Desktop\軟工\SE\SE\obj\Debug\SE.pdb
