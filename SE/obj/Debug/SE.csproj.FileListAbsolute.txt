@@ -36,6 +36,3 @@ C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.csprojResolveAssemblyRefer
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.Properties.Resources.resources
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.TetrisView.resources
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache
-\\psf\Home\Desktop\1-16\13\SE\SE\bin\Debug\SE.exe.config
-\\psf\Home\Desktop\1-16\13\SE\SE\obj\Debug\SE.exe
-\\psf\Home\Desktop\1-16\13\SE\SE\obj\Debug\SE.pdb

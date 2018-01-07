@@ -66,8 +66,11 @@ namespace SE
             }
             if (userInput.Equals(PAUSE_STATE))
             {
-                model.pause();
-                model.setState(PAUSE_STATE);
+                if (model.getState() == START_STATE)
+                {
+                    model.pause();
+                    model.setState(PAUSE_STATE);
+                }
             }
             if (userInput.Equals(CONTINUE_STATE))
             {

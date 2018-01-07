@@ -42,13 +42,14 @@ namespace SE
         /// <summary>
         /// 
         /// </summary>
-        Pen pen = new Pen(Color.Black, 1);//格線顏色 , 粗度
+        protected Pen pen = new Pen(Color.Black, 1);//格線顏色 , 粗度
 
         protected int gameWidth = 10; //寬有幾格
         protected int gameHeigh = 20; //高有幾格
         protected int cubeWidth = 30; //格子寬度
 
-        protected SolidBrush[] Brush = {
+        protected SolidBrush[] Brush_ =
+        {
         new SolidBrush(Color.LightGray),//空白格子的顏色
         new SolidBrush(Color.Red),//田
         new SolidBrush(Color.Orange),//倒L
@@ -58,6 +59,7 @@ namespace SE
         new SolidBrush(Color.Blue),//一
         new SolidBrush(Color.Purple)//凸
         };
+        
         /// <summary>
         /// 
         /// </summary>
@@ -81,6 +83,9 @@ namespace SE
 
         public virtual void drawComponent()
         {
+
+
+      
             picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
             picBox.Width = cubeWidth * gameWidth + 1;
             picBox.Location = new Point(10, 10);
@@ -121,6 +126,9 @@ namespace SE
 
         protected void PauseBtn_Click(object sender, EventArgs e)
         {
+            if (model.getState() == model.IDLE_STATE||
+                model.getState() == model.STOP_STATE) return;//***//
+            
             if (model.getState() != model.PAUSE_STATE)
             {
                 pauseBtn.Text = "繼續";
@@ -131,6 +139,7 @@ namespace SE
                 pauseBtn.Text = "暫停";
                 controller.userHasInput(model.PLAY_STATE);
             }
+            
         }
 
         protected void StartBtn_Click(object sender, EventArgs e)
@@ -208,7 +217,7 @@ namespace SE
             {
                 for (int j = 0; j < gameWidth; j++)
                 {
-                    graphics.Graphics.FillRectangle(Brush[gameScreen[i][j]], rect[i][j]);//填滿顏色
+                    graphics.Graphics.FillRectangle(Brush_[gameScreen[i][j]], rect[i][j]);//填滿顏色
                     graphics.Graphics.DrawRectangle(pen, rect[i][j]);//格線
                 }
             }
@@ -304,13 +313,9 @@ namespace SE
     }
     class TetrisViewInher1 : TetrisView
     {
-      
-        //private Button startBtn = new Button();
-        //private Button pauseBtn = new Button();
-        //private Button exitBtn = new Button();
-        //private PictureBox picBox = new PictureBox();
+        //B10415037
 
-     
+
         public TetrisViewInher1(TetrisController con,TetrisModel m)
         {
             controller = con;
@@ -322,33 +327,65 @@ namespace SE
         }
         public override void drawComponent() 
         {
-        
+            
+            Color BackColor_ = new Color();
+            BackColor_ = Color.FromArgb(155,100,100);
            
+
+            this.BackColor = BackColor_;
+            pen.Color = Color.White;
+
+
+            SolidBrush[] newBrush_ =
+            {
+                new SolidBrush(Color.DarkGray),//空白格子的顏色
+                new SolidBrush(Color.DeepPink),//田
+                new SolidBrush(Color.DarkBlue),//倒L
+                new SolidBrush(Color.DarkSlateBlue),//L
+                new SolidBrush(Color.DarkViolet),//z
+                new SolidBrush(Color.DarkGreen),//倒z
+                new SolidBrush(Color.DarkOrange),//一
+                new SolidBrush(Color.DarkRed)//凸
+            };
+            Brush_ = newBrush_;//換遊戲畫面
+
+
+
+            picBox.BackColor = BackColor_;
             picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
             picBox.Width = cubeWidth * gameWidth + 1;
             picBox.Location = new Point(250, 10);
-            picBox.BackColor = Color.Black;
-            
-
             this.Controls.Add(picBox);
 
+            startBtn.FlatStyle = FlatStyle.Flat;
+            startBtn.BackColor = BackColor_;
+            startBtn.ForeColor = Color.White;
             startBtn.Size = new Size(75, 25);
             startBtn.Text = "開始";
             startBtn.Location = new Point(20, 80);
             this.Controls.Add(startBtn);
 
+            pauseBtn.FlatStyle = FlatStyle.Flat;
+            pauseBtn.BackColor= BackColor_;
+            pauseBtn.ForeColor = Color.White;
             pauseBtn.Size = new Size(75, 25);
             pauseBtn.Text = "暫停";
             pauseBtn.Location = new Point(20, 145);
             this.Controls.Add(pauseBtn);
 
+            exitBtn.FlatStyle = FlatStyle.Flat;
+            exitBtn.BackColor = BackColor_;
+            exitBtn.ForeColor = Color.White;
             exitBtn.Size = new Size(75, 25);
             exitBtn.Text = "離開";
             exitBtn.Location = new Point(20, 210);
             this.Controls.Add(exitBtn);
 
+            label.ForeColor = Color.White;
+
+            label.Font = new Font("Consolas", 12);
             label.Location = new Point(20, 32);
-            label.Text = "Score:0";
+            label.Text = "Score : 0";
             this.Controls.Add(label);
 
             //每個button對應的function
@@ -356,6 +393,7 @@ namespace SE
             pauseBtn.Click += PauseBtn_Click;
             exitBtn.Click += ExitBtn_Click;
             timer.Tick += Timer_Tick;
+
         }
     }
 }
