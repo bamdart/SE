@@ -26,10 +26,12 @@ namespace SE
 
         public TetrisController()
         {
-            view = new TetrisView(this,model);
+            //   view = new TetrisView(this,model);
+            view = new TetrisViewInher1(this, model);
             model = new TetrisModel(view);
             model.setView(view);
         }
+
         public TetrisView getView()
         {
             return view;

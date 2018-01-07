@@ -26,7 +26,7 @@
         /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改
         /// 這個方法的內容。
         /// </summary>
-        private void InitializeComponent()
+        protected void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

@@ -46,7 +46,7 @@ namespace SE
 
         public int score = 0;//分數
 
-        public int gameSpeed = 500;//遊戲速度 
+        public int gameSpeed = 500;//遊戲速度
         public TetrisModel(TetrisView v)
         {
             view = v;
@@ -72,7 +72,7 @@ namespace SE
                 }
                 gameScreen.Add(tempScreen);
             }
-            gameSpeed = 1000;
+            //gameSpeed = 1000;
             view.timer.Interval = gameSpeed;//設定遊戲速度
         }
         public void setView(TetrisView v)
@@ -162,7 +162,7 @@ namespace SE
                 view.timer.Enabled = false;//遊戲停止
                 AddShapeToScreen();
                 return;
-            }
+            }//判斷有沒有死掉
 
             //下降碰撞判斷，有碰到
             if (CheckBound(tempPoint, nowShape) == 2 || CheckBound(tempPoint, nowShape) == 3)
@@ -194,7 +194,7 @@ namespace SE
                 view.timer.Enabled = false;//遊戲停止
                 AddShapeToScreen();
                 return;
-            }
+            }//判斷有沒有死掉
 
             while (CheckBound(tempPoint, nowShape) == 0)
             {
@@ -261,6 +261,16 @@ namespace SE
 
             nowShape[0] = random.Next(0, 7);
             nowShape[1] = 0;
+
+            //寫一個迴圈
+            //一職跑到出現(>4)或是碰到方塊
+            if ((CheckBound(nowPoint, nowShape) == 2 || CheckBound(nowPoint, nowShape) == 3) && nowPoint.Y == 0)
+            {
+                view.timer.Enabled = false;//遊戲停止
+                AddShapeToScreen();
+                return;
+            }//判斷有沒有死掉
+
         }
         public void Rotate()//轉動
         {

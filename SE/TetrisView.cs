@@ -15,15 +15,16 @@ namespace SE
     {
 
         public TetrisModel model;
-        TetrisController controller;
+        public TetrisController controller;
         public System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         public Label label = new Label();
-        private Button startBtn = new Button();
-        private Button pauseBtn = new Button();
-        private Button exitBtn = new Button();
-        private PictureBox picBox = new PictureBox();
-        BufferedGraphicsContext bufferedGraphicsContext;//buffer
-        BufferedGraphics graphics;//畫圖用
+        protected Button startBtn = new Button();
+        protected Button pauseBtn = new Button();
+        protected Button exitBtn = new Button();
+        protected PictureBox picBox = new PictureBox();
+        protected BufferedGraphicsContext bufferedGraphicsContext;//buffer
+        protected BufferedGraphics graphics;//畫圖用
+
         public string IDLE_STATE = "IDLE",
               START_STATE = "START",
               PLAY_STATE = "PLAY",
@@ -37,13 +38,17 @@ namespace SE
               STOP_STATE = "STOP",
               CONTINUE_STATE = "CONTINUE",
               EXIT_STATE = "EXIT";
+
+        /// <summary>
+        /// 
+        /// </summary>
         Pen pen = new Pen(Color.Black, 1);//格線顏色 , 粗度
 
-        int gameWidth = 10; //寬有幾格
-        int gameHeigh = 20; //高有幾格
-        int cubeWidth = 30; //格子寬度
+        protected int gameWidth = 10; //寬有幾格
+        protected int gameHeigh = 20; //高有幾格
+        protected int cubeWidth = 30; //格子寬度
 
-        SolidBrush[] Brush = {
+        protected SolidBrush[] Brush = {
         new SolidBrush(Color.LightGray),//空白格子的顏色
         new SolidBrush(Color.Red),//田
         new SolidBrush(Color.Orange),//倒L
@@ -53,7 +58,9 @@ namespace SE
         new SolidBrush(Color.Blue),//一
         new SolidBrush(Color.Purple)//凸
         };
-
+        /// <summary>
+        /// 
+        /// </summary>
         Random random = new Random(Guid.NewGuid().GetHashCode());//用來隨機產生方塊種類
 
 
@@ -64,12 +71,10 @@ namespace SE
             this.Size = new Size(600, 700);
             this.Load += TetrisView_Load;
 
-            
-            InitializeComponent();
-
+            this.InitializeComponent();
         }
 
-        private void TetrisView_Load(object sender, EventArgs e)
+        protected void TetrisView_Load(object sender, EventArgs e)
         {
             controller.userHasInput(IDLE_STATE);
         }
@@ -79,6 +84,7 @@ namespace SE
             picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
             picBox.Width = cubeWidth * gameWidth + 1;
             picBox.Location = new Point(10, 10);
+
             this.Controls.Add(picBox);
             startBtn.Size = new Size(75, 25);
             startBtn.Text = "開始";
@@ -103,17 +109,17 @@ namespace SE
             timer.Tick += Timer_Tick;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        protected void Timer_Tick(object sender, EventArgs e)
         {
             controller.userHasInput(model.DOWN_STATE);
         }
 
-        private void ExitBtn_Click(object sender, EventArgs e)
+        protected void ExitBtn_Click(object sender, EventArgs e)
         {
             controller.userHasInput(model.EXIT_STATE);
         }
 
-        private void PauseBtn_Click(object sender, EventArgs e)
+        protected void PauseBtn_Click(object sender, EventArgs e)
         {
             if (model.getState() != model.PAUSE_STATE)
             {
@@ -127,7 +133,7 @@ namespace SE
             }
         }
 
-        private void StartBtn_Click(object sender, EventArgs e)
+        protected void StartBtn_Click(object sender, EventArgs e)
         {
             controller.userHasInput(model.START_STATE);
         }
@@ -294,6 +300,62 @@ namespace SE
 
             }
 
+        }
+    }
+    class TetrisViewInher1 : TetrisView
+    {
+      
+        //private Button startBtn = new Button();
+        //private Button pauseBtn = new Button();
+        //private Button exitBtn = new Button();
+        //private PictureBox picBox = new PictureBox();
+
+     
+        public TetrisViewInher1(TetrisController con,TetrisModel m)
+        {
+            controller = con;
+            model = m;
+            this.Size = new Size(600, 700);
+            this.Load += TetrisView_Load;
+
+            InitializeComponent();
+        }
+        public override void drawComponent() 
+        {
+        
+           
+            picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
+            picBox.Width = cubeWidth * gameWidth + 1;
+            picBox.Location = new Point(250, 10);
+            picBox.BackColor = Color.Black;
+            
+
+            this.Controls.Add(picBox);
+
+            startBtn.Size = new Size(75, 25);
+            startBtn.Text = "開始";
+            startBtn.Location = new Point(20, 80);
+            this.Controls.Add(startBtn);
+
+            pauseBtn.Size = new Size(75, 25);
+            pauseBtn.Text = "暫停";
+            pauseBtn.Location = new Point(20, 145);
+            this.Controls.Add(pauseBtn);
+
+            exitBtn.Size = new Size(75, 25);
+            exitBtn.Text = "離開";
+            exitBtn.Location = new Point(20, 210);
+            this.Controls.Add(exitBtn);
+
+            label.Location = new Point(20, 32);
+            label.Text = "Score:0";
+            this.Controls.Add(label);
+
+            //每個button對應的function
+            startBtn.Click += StartBtn_Click;
+            pauseBtn.Click += PauseBtn_Click;
+            exitBtn.Click += ExitBtn_Click;
+            timer.Tick += Timer_Tick;
         }
     }
 }
