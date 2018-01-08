@@ -126,18 +126,21 @@ namespace SE
 
         protected void PauseBtn_Click(object sender, EventArgs e)
         {
-            if (model.getState() == model.IDLE_STATE||
-                model.getState() == model.STOP_STATE) return;//***//
-            
-            if (model.getState() != model.PAUSE_STATE)
+       
+            if (model.getState() == model.PAUSE_STATE 
+                || model.getState() == model.PLAY_STATE 
+                || model.getState() == model.DOWN_STATE)
             {
-                pauseBtn.Text = "繼續";
-                controller.userHasInput(model.PAUSE_STATE);
-            }
-            else
-            {
-                pauseBtn.Text = "暫停";
-                controller.userHasInput(model.PLAY_STATE);
+                if (model.getState() != model.PAUSE_STATE)
+                {
+                    pauseBtn.Text = "繼續";
+                    controller.userHasInput(model.PAUSE_STATE);
+                }
+                else
+                {
+                    pauseBtn.Text = "暫停";
+                    controller.userHasInput(model.PLAY_STATE);
+                }
             }
             
         }
@@ -145,6 +148,7 @@ namespace SE
         protected void StartBtn_Click(object sender, EventArgs e)
         {
             controller.userHasInput(model.START_STATE);
+            pauseBtn.Text = "暫停";//在按下暫停的狀態按開始 暫停紐就會顯示繼續(顯示錯誤)
         }
 
         public TetrisView()

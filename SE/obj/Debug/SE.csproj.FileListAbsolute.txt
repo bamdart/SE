@@ -36,3 +36,12 @@ C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.csprojResolveAssemblyRefer
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.Properties.Resources.resources
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.TetrisView.resources
 C:\Users\Fansen\Desktop\Assignment\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\bin\Debug\SE.exe.config
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.exe
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.pdb
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\bin\Debug\SE.exe
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\bin\Debug\SE.pdb
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.csprojResolveAssemblyReference.cache
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.Properties.Resources.resources
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.TetrisView.resources
+C:\Users\Fansen\Desktop\Assignment\14\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache

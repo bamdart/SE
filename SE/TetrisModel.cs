@@ -252,6 +252,7 @@ namespace SE
             }
 
             CreateNewCube();//新方塊
+
         }
 
         public void CreateNewCube()

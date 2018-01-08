@@ -39,10 +39,16 @@ namespace SE
 
         public void userHasInput(string userInput)
         {
+           // Console.Write(userInput + "\n");
             if (userInput.Equals(DOWN_STATE))
             {
                 model.GoDown();
-                model.setState(DOWN_STATE);
+
+                if (view.timer.Enabled ==true)
+                    model.setState(DOWN_STATE);
+                else if(view.timer.Enabled == false)
+                    userHasInput(STOP_STATE);
+                /**/
             }
             if (userInput.Equals(IDLE_STATE))
             {
@@ -66,7 +72,7 @@ namespace SE
             }
             if (userInput.Equals(PAUSE_STATE))
             {
-                if (model.getState() == START_STATE)
+                if (model.getState() == START_STATE|| model.getState() == DOWN_STATE)
                 {
                     model.pause();
                     model.setState(PAUSE_STATE);
