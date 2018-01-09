@@ -10,6 +10,7 @@ namespace SE
 {
     class B10415037 : TetrisView
     {
+        public PictureBox LOGObox = new PictureBox();
         //B10415037
         public B10415037(TetrisController con, TetrisModel m)
         {
@@ -23,6 +24,7 @@ namespace SE
 
         public override void drawComponent()
         {
+           
 
             Color BackColor_ = new Color();
             BackColor_ = Color.FromArgb(155, 100, 100);//背景顏色
@@ -80,6 +82,11 @@ namespace SE
             label.Location = new Point(20, 32);
             label.Text = "Score : 0";
             this.Controls.Add(label);
+
+            LOGObox.Image = new Bitmap("deer.png");        
+            LOGObox.Location = new Point(10, 300);
+            LOGObox.Size = new Size(500, 400);    
+            this.Controls.Add(LOGObox);
 
             //每個button對應的function
             startBtn.Click += StartBtn_Click;

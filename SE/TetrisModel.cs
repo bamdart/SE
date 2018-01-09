@@ -247,7 +247,7 @@ namespace SE
                 if (CheckRowAllIsCube(i))//如果整排被填滿
                 {
                     score++;//加分
-                    view.label.Text = score.ToString();//分數刷新
+                    view.label.Text = "Score : " + score.ToString();//分數刷新
 
                     //消除的特效
                     for (int j = 0; j < gameWidth; j++)
@@ -382,7 +382,7 @@ namespace SE
             score = 0;
             gameSpeed = 500;
             view.timer.Enabled = true;//timer1 開始動作
-            view.label.Text = score.ToString();
+            view.label.Text = "Score : " + score.ToString();
             InitCubeShape();
 
             //NEW CUBE

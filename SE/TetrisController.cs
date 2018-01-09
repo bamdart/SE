@@ -27,7 +27,7 @@ namespace SE
         public TetrisController()
         {
             //   view = new TetrisView(this,model);
-            view = new B10415018(this, model);
+            view = new B10415037(this, model);
             model = new TetrisModel(view);
             model.setView(view);
         }
