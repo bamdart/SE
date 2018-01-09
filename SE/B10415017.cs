@@ -25,21 +25,21 @@ namespace SE
         {
 
             Color BackColor_ = new Color();
-            BackColor_ = Color.FromArgb(155, 100, 100);//背景顏色
+            BackColor_ = Color.LightGoldenrodYellow;//背景顏色
             this.BackColor = BackColor_;
 
-            pen.Color = Color.White;//筆刷顏色
+            pen.Color = Color.Black;//筆刷顏色
 
             SolidBrush[] newBrush_ =//方塊顏色
             {
-                new SolidBrush(Color.DarkGray),//空白格子的顏色
-                new SolidBrush(Color.DeepPink),//田
-                new SolidBrush(Color.DarkBlue),//倒L
-                new SolidBrush(Color.DarkSlateBlue),//L
-                new SolidBrush(Color.DarkViolet),//z
-                new SolidBrush(Color.DarkGreen),//倒z
-                new SolidBrush(Color.DarkOrange),//一
-                new SolidBrush(Color.DarkRed)//凸
+                new SolidBrush(BackColor_),//空白格子的顏色
+                new SolidBrush(Color.LightPink),//田
+                new SolidBrush(Color.LightBlue),//倒L
+                new SolidBrush(Color.SlateBlue),//L
+                new SolidBrush(Color.Violet),//z
+                new SolidBrush(Color.LightGreen),//倒z
+                new SolidBrush(Color.Orange),//一
+                new SolidBrush(Color.Red)//凸
             };
 
             Brush_ = newBrush_;//換遊戲畫面
@@ -47,37 +47,36 @@ namespace SE
             picBox.BackColor = BackColor_;
             picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
             picBox.Width = cubeWidth * gameWidth + 1;
-            picBox.Location = new Point(250, 10);
+            picBox.Location = new Point((this.Width- picBox.Width)/2, 10);
             this.Controls.Add(picBox);
 
             startBtn.FlatStyle = FlatStyle.Flat;
             startBtn.BackColor = BackColor_;
-            startBtn.ForeColor = Color.White;
+            startBtn.ForeColor = Color.Black;
             startBtn.Size = new Size(75, 25);
             startBtn.Text = "開始";
-            startBtn.Location = new Point(20, 80);
+            startBtn.Location = new Point((this.Width- startBtn .Width)/2- 100, this.Height- startBtn .Height- 50);
             this.Controls.Add(startBtn);
 
             pauseBtn.FlatStyle = FlatStyle.Flat;
             pauseBtn.BackColor = BackColor_;
-            pauseBtn.ForeColor = Color.White;
+            pauseBtn.ForeColor = Color.Black;
             pauseBtn.Size = new Size(75, 25);
             pauseBtn.Text = "暫停";
-            pauseBtn.Location = new Point(20, 145);
+            pauseBtn.Location = new Point((this.Width- pauseBtn.Width)/2, this.Height - pauseBtn.Height- 50);
             this.Controls.Add(pauseBtn);
 
             exitBtn.FlatStyle = FlatStyle.Flat;
             exitBtn.BackColor = BackColor_;
-            exitBtn.ForeColor = Color.White;
+            exitBtn.ForeColor = Color.Black;
             exitBtn.Size = new Size(75, 25);
             exitBtn.Text = "離開";
-            exitBtn.Location = new Point(20, 210);
+            exitBtn.Location = new Point((this.Width- exitBtn .Width)/2+ 100, this.Height - exitBtn.Height- 50);
             this.Controls.Add(exitBtn);
 
-            label.ForeColor = Color.White;
-
+            label.ForeColor = Color.Black;
             label.Font = new Font("Consolas", 12);
-            label.Location = new Point(20, 32);
+            label.Location = new Point(this.Width-125, 32);
             label.Text = "Score : 0";
             this.Controls.Add(label);
 
