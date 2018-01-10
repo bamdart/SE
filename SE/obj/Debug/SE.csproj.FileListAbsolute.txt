@@ -65,3 +65,13 @@ C:\Users\ms076\SE\SE\obj\Debug\SE.csproj.CoreCompileInputs.cache
 C:\Users\ms076\SE\SE\obj\Debug\SE.exe
 C:\Users\ms076\SE\SE\obj\Debug\SE.pdb
 C:\Users\ms076\SE\SE\obj\Debug\SE.B10415020.resources
+C:\SE\SE\bin\Debug\SE.exe.config
+C:\SE\SE\obj\Debug\SE.exe
+C:\SE\SE\obj\Debug\SE.pdb
+C:\SE\SE\bin\Debug\SE.exe
+C:\SE\SE\bin\Debug\SE.pdb
+C:\SE\SE\obj\Debug\SE.csprojResolveAssemblyReference.cache
+C:\SE\SE\obj\Debug\SE.B10415020.resources
+C:\SE\SE\obj\Debug\SE.Properties.Resources.resources
+C:\SE\SE\obj\Debug\SE.TetrisView.resources
+C:\SE\SE\obj\Debug\SE.csproj.GenerateResource.Cache

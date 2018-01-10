@@ -278,6 +278,7 @@ namespace SE
 
             nowShape[0] = random.Next(0, 7);
             nowShape[1] = 0;
+            
 
             //寫一個迴圈
             //一職跑到出現(>4)或是碰到方塊

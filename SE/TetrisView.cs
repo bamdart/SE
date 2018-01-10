@@ -60,20 +60,23 @@ namespace SE
         new SolidBrush(Color.Purple)//凸
         };
 
+
         /// <summary>
         /// 
         /// </summary>
-        Random random = new Random(Guid.NewGuid().GetHashCode());//用來隨機產生方塊種類
-
-
         public TetrisView(TetrisController con, TetrisModel m)
         {
             controller = con;
             model = m;
             this.Size = new Size(600, 700);
             this.Load += TetrisView_Load;
-
+            this.KeyDown += TetrisView_KeyDown;
             this.InitializeComponent();
+        }
+
+        private void TetrisView_KeyDown(object sender, KeyEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected void TetrisView_Load(object sender, EventArgs e)
@@ -103,7 +106,7 @@ namespace SE
             label.Location = new Point(440, 12);
             label.Text = "Score:0";
             this.Controls.Add(label);
-
+            
             //每個button對應的function
             startBtn.Click += StartBtn_Click;
             pauseBtn.Click += PauseBtn_Click;
@@ -165,29 +168,31 @@ namespace SE
                     controller.userHasInput(keyData);
                     return true;
                 }
-                if (keyData == Keys.Down)
+                else if (keyData == Keys.Down)
                 {
                     controller.userHasInput(keyData);//暫時還沒有功能
                     return true;
                 }
-                if (keyData == Keys.Left)
+                else if (keyData == Keys.Left)
                 {
                     controller.userHasInput(keyData);
                     return true;
                 }
-                if (keyData == Keys.Right)
+                else if (keyData == Keys.Right)
                 {
                     controller.userHasInput(keyData);
                     return true;
                 }
-                if (keyData == Keys.Space)
+                else if (keyData == Keys.Space)
                 {
                     controller.userHasInput(keyData);
                     return true;
                 }
+
             }
+            return true;
             // Call the base class
-            return base.ProcessCmdKey(ref msg, keyData);
+            //return base.ProcessCmdKey(ref msg, keyData);
         }
 
         public virtual void updateView()

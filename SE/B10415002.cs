@@ -10,7 +10,7 @@ namespace SE
 {
     class B10415002 : TetrisView
     {
-        //B10415037
+        //B10415002
         public B10415002(TetrisController con, TetrisModel m)
         {
             controller = con;
@@ -24,62 +24,67 @@ namespace SE
         public override void drawComponent()
         {
 
-            Color BackColor_ = new Color();
-            BackColor_ = Color.FromArgb(155, 100, 100);//背景顏色
-            this.BackColor = BackColor_;
+            this.BackColor = Color.FromArgb(0xD2, 0xE9, 0xFF);
 
             pen.Color = Color.White;//筆刷顏色
 
             SolidBrush[] newBrush_ =//方塊顏色
             {
-                new SolidBrush(Color.DarkGray),//空白格子的顏色
-                new SolidBrush(Color.DeepPink),//田
-                new SolidBrush(Color.DarkBlue),//倒L
-                new SolidBrush(Color.DarkSlateBlue),//L
-                new SolidBrush(Color.DarkViolet),//z
-                new SolidBrush(Color.DarkGreen),//倒z
-                new SolidBrush(Color.DarkOrange),//一
-                new SolidBrush(Color.DarkRed)//凸
+                new SolidBrush(Color.LightGray),//空白格子的顏色
+                new SolidBrush(Color.Aqua),//田
+                new SolidBrush(Color.Bisque),//倒L
+                new SolidBrush(Color.LightSalmon),//L
+                new SolidBrush(Color.Tan),//z
+                new SolidBrush(Color.SteelBlue),//倒z
+                new SolidBrush(Color.Tomato),//一
+                new SolidBrush(Color.Fuchsia)//凸
             };
 
             Brush_ = newBrush_;//換遊戲畫面
 
-            picBox.BackColor = BackColor_;
+            picBox.BackColor = Color.FromArgb(0xD2, 0xE9, 0xFF);
             picBox.Height = cubeWidth * gameHeigh + 1;//設定遊戲視窗大小
             picBox.Width = cubeWidth * gameWidth + 1;
             picBox.Location = new Point(250, 10);
+            picBox.BackColor = Color.FromArgb(0xFF, 0xEE, 0xDD);
             this.Controls.Add(picBox);
 
-            startBtn.FlatStyle = FlatStyle.Flat;
-            startBtn.BackColor = BackColor_;
-            startBtn.ForeColor = Color.White;
-            startBtn.Size = new Size(75, 25);
+
+
+
+            startBtn.Size = new Size(90, 50);
             startBtn.Text = "開始";
-            startBtn.Location = new Point(20, 80);
+            startBtn.Font = new Font("Arial", 14, FontStyle.Bold);
+            startBtn.Location = new Point(40, 140);
+            startBtn.BackColor = Color.White;
             this.Controls.Add(startBtn);
 
-            pauseBtn.FlatStyle = FlatStyle.Flat;
-            pauseBtn.BackColor = BackColor_;
-            pauseBtn.ForeColor = Color.White;
-            pauseBtn.Size = new Size(75, 25);
+
+
+            pauseBtn.Size = new Size(90, 50);
             pauseBtn.Text = "暫停";
-            pauseBtn.Location = new Point(20, 145);
+            pauseBtn.Font = new Font("Arial", 14, FontStyle.Bold);
+            pauseBtn.Location = new Point(40, 240);
+            pauseBtn.BackColor = Color.White;
             this.Controls.Add(pauseBtn);
 
-            exitBtn.FlatStyle = FlatStyle.Flat;
-            exitBtn.BackColor = BackColor_;
-            exitBtn.ForeColor = Color.White;
-            exitBtn.Size = new Size(75, 25);
-            exitBtn.Text = "離開";
-            exitBtn.Location = new Point(20, 210);
+
+
+            exitBtn.Size = new Size(90, 50);
+            exitBtn.Text = "Exit";
+            exitBtn.Font = new Font("Arial", 14, FontStyle.Bold);
+            exitBtn.Location = new Point(40, 340);
+            exitBtn.BackColor = Color.White;
             this.Controls.Add(exitBtn);
 
-            label.ForeColor = Color.White;
-
-            label.Font = new Font("Consolas", 12);
-            label.Location = new Point(20, 32);
+            label.ForeColor = Color.Green;
+            label.Font = new Font("Arial", 20, FontStyle.Bold | FontStyle.Underline);
+            label.Location = new Point(40, 40);
             label.Text = "Score : 0";
+            label.Size = new Size(400, 100);
             this.Controls.Add(label);
+
+            this.Text = "B10415002 View";
 
             //每個button對應的function
             startBtn.Click += StartBtn_Click;
