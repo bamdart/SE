@@ -190,7 +190,7 @@ namespace SE
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        public void updateView()
+        public virtual void updateView()
         {
             List<List<int>> gameScreen = model.getScreen();
             List<List<Rectangle>> rect = model.getRect();
